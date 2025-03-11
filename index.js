@@ -1,11 +1,13 @@
 const electron = require("electron");
 // import electron from 'electron'
-const { app } = electron;
+const { app, BrowserWindow } = electron;
 
-// event-base programming.
+// event-based programming.
 // app.on - thing we're listening to
 // 'ready' - event we're listening for
 // () => {} - fxn to run when event occurs
 app.on("ready", () => {
-  console.log("App is now running");
+  const mainWindow = new BrowserWindow({});
+  // essentially says ... look at the current dir and find index.html
+  mainWindow.loadURL(`file://${__dirname}/index.html`);
 });

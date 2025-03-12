@@ -13,8 +13,18 @@
   <hr />
   <form action="">
     <div>
-      <label for="">Select a video</label>
+      <label>Select a video</label>
       <input type="file" accept="video/*" />
     </div>
+    <hr />
+    <button type="submit">Get Info</button>
   </form>
+
+  <script>
+    document.querySelector("form").addEventListener("submit", (event) => {
+      event.preventDefault;
+      //<!-- acces file the user has seleted -->
+      const file = document.querySelector("input").files[0];
+    });
+  </script>
 </body>

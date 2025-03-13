@@ -1,13 +1,42 @@
-const electron = require("electron");
-// import electron from 'electron'
-const { app, BrowserWindow } = electron;
+const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const path = require("path");
+const fs = require("fs");
+const ffmpeg = require("fluent-ffmpeg");
 
-// event-based programming.
-// app.on - thing we're listening to
-// 'ready' - event we're listening for
-// () => {} - fxn to run when event occurs
-app.on("ready", () => {
-  const mainWindow = new BrowserWindow({});
-  // essentially says ... look at the current dir and find index.html
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
+app.whenReady().then(() => {
+  const mainWindow = new BrowserWindow({
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+    },
+  });
+
+  mainWindow.loadFile("index.html");
+});
+
+ipcMain.handle("dialog:openFile", async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ["openFile"],
+    filters: [{ name: "Videos", extensions: ["mp4", "mov", "avi", "mkv"] }],
+  });
+  return result.canceled ? null : result.filePaths[0];
+});
+
+ipcMain.on("video:submit", (event, videoPath) => {
+  ffmpeg.ffprobe(videoPath, (err, metadata) => {
+    if (err) {
+      console.error("Error reading video metadata:", err);
+      return;
+    }
+
+    const duration = metadata.format.duration;
+    const format = metadata.format.format_name;
+    const stats = fs.statSync(videoPath);
+    const size = stats.size;
+
+    event.sender.send("video:info", {
+      duration,
+      format,
+      size,
+    });
+  });
 });

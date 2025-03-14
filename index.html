@@ -11,8 +11,8 @@
     <h3>About:</h3>
     <p>
       This program lets you select any video file on your computer and it
-      determines its length, format, and size. Nothing fancy, just Electron
-      Introductory Concepts.
+      determines and displays some details like its length, format, and size.
+      Nothing fancy, just Electron Introductory Concepts.
     </p>
     <hr />
     <form>
@@ -26,7 +26,9 @@
     </form>
 
     <h3>Video Info:</h3>
-    <p id="videoStatus">Waiting...</p>
+    <p id="videoStatus">
+      Select a video and click "Get Info" to see video details here
+    </p>
     <ul id="videoDetails"></ul>
 
     <script>
@@ -39,9 +41,9 @@
           if (filePath) {
             selectedPath = filePath;
             document.getElementById("filePath").innerText =
-              "Selected file: " + filePath;
+              "Selected file path: " + filePath;
             document.getElementById("videoStatus").innerText =
-              "Ready to analyze.";
+              "Ready to analyze. Click 'Get Info' ";
             document.getElementById("videoDetails").innerHTML = "";
           }
         });
@@ -81,8 +83,10 @@
 
         // Get only the main format name (e.g., "mp4" from "mov,mp4,m4a")
         const format = data.format.split(",")[1] || data.format.split(",")[0];
+        const fileName = selectedPath.split(/[/\\]/).pop();
 
         document.getElementById("videoDetails").innerHTML = `
+          <li><strong>Video Name:</strong> ${fileName}</li>
           <li><strong>Duration:</strong> ${durationStr}</li>
           <li><strong>Format:</strong> ${format.toUpperCase()}</li>
           <li><strong>Size:</strong> ${sizeMB} MB</li>
